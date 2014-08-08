@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import slidinguppanel.sothree.com.androidslidinguplist.SlidingUpPanelLayout;
+import com.livelovely.slidinguplist.SlidingUpPanelLayout;
 
 public class DemoActivity extends Activity {
     private static final String TAG = "DemoActivity";

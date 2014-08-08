@@ -15,7 +15,7 @@
  */
 
 
-package slidinguppanel.sothree.com.androidslidinguplist;
+package com.livelovely.slidinguplist;
 
 import android.content.Context;
 import android.util.Log;
@@ -1253,6 +1253,8 @@ public class ViewDragHelper {
         if (child == null) {
             return false;
         }
+        return true;
+        /*
         final boolean checkHorizontal = mCallback.getViewHorizontalDragRange(child) > 0;
         final boolean checkVertical = mCallback.getViewVerticalDragRange(child) > 0;
 
@@ -1264,6 +1266,7 @@ public class ViewDragHelper {
             return Math.abs(dy) > mTouchSlop;
         }
         return false;
+        */
     }
 
     /**

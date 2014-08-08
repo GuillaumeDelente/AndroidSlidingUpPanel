@@ -1,4 +1,4 @@
-package slidinguppanel.sothree.com.androidslidinguplist;
+package com.livelovely.slidinguplist;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.ListView;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -775,10 +777,24 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     Log.d("SlidingUpPanel", "case3");
                     return false;
                 }
+                if (mInitialMotionY > y) {
+                    //Scrolling Down
+                    if (isPanelExpanded()) {
+                        mDragHelper.cancel();
+                        return false;
+                    }
+                } else {
+                    //Scrolling Up
+                    if (isPanelExpanded() && mSlideableView.canScrollVertically(-1)) {
+                        mDragHelper.cancel();
+                        return false;
+                    }
+                }
                 break;
             }
         }
         boolean shouldIntercept = mDragHelper.shouldInterceptTouchEvent(ev);
+
         Log.d("SlidingUpPanel", "shouldInterceptTouchEvent " + shouldIntercept);
         return shouldIntercept;
     }
@@ -1018,7 +1034,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         int panelTop = computePanelTopPosition(slideOffset);
         if (mDragHelper.smoothSlideViewTo(mSlideableView, mSlideableView.getLeft(), panelTop)) {
             setAllChildrenVisible();
-            postInvalidateOnAnimation();
+            ViewCompat.postInvalidateOnAnimation(this);
             return true;
         }
         return false;
@@ -1031,7 +1047,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mDragHelper.abort();
                 return;
             }
-            postInvalidateOnAnimation();
+            ViewCompat.postInvalidateOnAnimation(this);
         }
     }
 
