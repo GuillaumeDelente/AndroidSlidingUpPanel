@@ -1374,6 +1374,7 @@ public class ViewDragHelper {
     }
 
     private void dragTo(int left, int top, int dx, int dy) {
+        Log.d("SlidingUpPanelLayout", "dragTo " + top);
         int clampedX = left;
         int clampedY = top;
         final int oldLeft = mCapturedView.getLeft();

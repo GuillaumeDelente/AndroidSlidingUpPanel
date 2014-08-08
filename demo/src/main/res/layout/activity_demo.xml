@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".DemoActivity" >
 
-    <slidinguppanel.sothree.com.androidslidinguplist.SlidingUpPanelLayout
+    <com.livelovely.slidinguplist.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,8 +35,8 @@
         <!-- SLIDING LAYOUT -->
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
             android:id="@+id/listview"/>
-    </slidinguppanel.sothree.com.androidslidinguplist.SlidingUpPanelLayout>
+    </com.livelovely.slidinguplist.SlidingUpPanelLayout>
 
 </RelativeLayout>

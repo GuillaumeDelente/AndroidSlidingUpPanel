@@ -628,19 +628,29 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int childHeightSpec;
             if (lp.height == LayoutParams.WRAP_CONTENT) {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+                Log.d("SlidingUpPanelLayout", "childHeightSpec " + childHeightSpec);
             } else if (lp.height == LayoutParams.MATCH_PARENT) {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             } else {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+                if (child == mSlideableView) {
+                }
             }
 
             if (child == mSlideableView) {
+                //mSlideRange = MeasureSpec.getSize(childHeightSpec);
+                //- mPanelHeight;
+                Log.d("SlidingUpPanelLayout", "slideRange " + mSlideRange);
+                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+                child.measure(childWidthSpec, childHeightSpec);
+                int contentHeight = child.getMeasuredHeight();
+                int finalHeight = Math.min(contentHeight, 700);
+                childHeightSpec = MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY);
                 mSlideRange = MeasureSpec.getSize(childHeightSpec) - mPanelHeight;
+                Log.d("SlidingUpPanelLayout", "slideRange " + child.getMeasuredHeight());
             }
-
             child.measure(childWidthSpec, childHeightSpec);
         }
-
         setMeasuredDimension(widthSize, heightSize);
     }
 
