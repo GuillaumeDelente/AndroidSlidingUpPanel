@@ -94,6 +94,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private int mPanelHeight = -1;
 
     /**
+     * The size of the overhang in pixels.
+     */
+    private int mSavedPanelHeight = -1;
+
+    /**
      * The size of the shadow in pixels.
      */
     private int mShadowHeight = -1;
@@ -307,6 +312,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mPanelHeight == -1) {
             mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
         }
+        mSavedPanelHeight = mPanelHeight;
         if (mShadowHeight == -1) {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
@@ -576,6 +582,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+        mPanelHeight = mSavedPanelHeight;
+
         if (widthMode != MeasureSpec.EXACTLY) {
             throw new IllegalStateException("Width must have an exact value or MATCH_PARENT");
         } else if (heightMode != MeasureSpec.EXACTLY) {
@@ -633,21 +641,18 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             } else {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
-                if (child == mSlideableView) {
-                }
             }
 
             if (child == mSlideableView) {
-                //mSlideRange = MeasureSpec.getSize(childHeightSpec);
-                //- mPanelHeight;
-                Log.d("SlidingUpPanelLayout", "slideRange " + mSlideRange);
-                childHeightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+                childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.AT_MOST);
                 child.measure(childWidthSpec, childHeightSpec);
-                int contentHeight = child.getMeasuredHeight();
-                int finalHeight = Math.min(contentHeight, 700);
-                childHeightSpec = MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY);
-                mSlideRange = MeasureSpec.getSize(childHeightSpec) - mPanelHeight;
-                Log.d("SlidingUpPanelLayout", "slideRange " + child.getMeasuredHeight());
+                final int contentHeight = child.getMeasuredHeight();
+                if (contentHeight < mPanelHeight) {
+                    mSlideRange = 0;
+                    mPanelHeight = contentHeight;
+                } else {
+                    mSlideRange = contentHeight - mPanelHeight;
+                }
             }
             child.measure(childWidthSpec, childHeightSpec);
         }

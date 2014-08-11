@@ -35,7 +35,7 @@ public class DemoActivity extends Activity {
 
         ListView lv = (ListView) findViewById(R.id.listview);
         lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                new String[]{"Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip",}));
+                new String[]{"Plop"}));//, "Plip", "Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip",}));
 
         boolean actionBarHidden = savedInstanceState != null && savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false);
         if (actionBarHidden) {

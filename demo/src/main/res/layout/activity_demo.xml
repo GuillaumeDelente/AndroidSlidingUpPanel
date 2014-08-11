@@ -13,6 +13,7 @@
         sothree:panelHeight="68dp"
         sothree:shadowHeight="4dp"
         sothree:paralaxOffset="100dp"
+        sothree:overlay="true"
         sothree:dragView="@+id/dragView">
 
         <!-- MAIN CONTENT -->
@@ -35,7 +36,7 @@
         <!-- SLIDING LAYOUT -->
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
             android:id="@+id/listview"/>
     </com.livelovely.slidinguplist.SlidingUpPanelLayout>
 
