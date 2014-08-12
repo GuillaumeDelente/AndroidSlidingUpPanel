@@ -232,6 +232,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
          * @param panel The child view that was slid to a hidden position
          */
         public void onPanelHidden(View panel);
+        /**
+         * Called when a sliding panel becomes visible.
+         * @param panel The child view that was slid to a visible position
+         */
+        public void onPanelShown(View panel);
     }
 
     /**
@@ -253,6 +258,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         @Override
         public void onPanelHidden(View panel) {
+        }
+        @Override
+        public void onPanelShown(View panel) {
         }
     }
 
@@ -510,6 +518,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
     void dispatchOnPanelHidden(View panel) {
         if (mPanelSlideListener != null) {
             mPanelSlideListener.onPanelHidden(panel);
+        }
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+    }
+
+    void dispatchOnPanelShown(View panel) {
+        if (mPanelSlideListener != null) {
+            mPanelSlideListener.onPanelShown(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -965,17 +980,23 @@ public class SlidingUpPanelLayout extends ViewGroup {
             requestLayout();
             smoothSlideTo(0, 0);
         }
+        dispatchOnPanelShown(mSlideableView);
     }
 
     /**
      * Hides the sliding panel entirely.
      */
     public void hidePanel() {
+        Log.d(TAG, "HidePanel");
         if (mFirstLayout) {
             mSlideState = SlideState.HIDDEN;
         } else {
             if (mSlideState == SlideState.DRAGGING || mSlideState == SlideState.HIDDEN) return;
             int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ? +mPanelHeight : -mPanelHeight);
+            Log.d(TAG, "ComputePanelTopPosition : " + computePanelTopPosition(0.0f));
+            Log.d(TAG, "newTop : " + newTop);
+            Log.d(TAG, "computeSlideOffset : " + computeSlideOffset(newTop));
+            Log.d(TAG, "mPanelheight : " + mPanelHeight);
             smoothSlideTo(computeSlideOffset(newTop), 0);
         }
     }
