@@ -17,12 +17,15 @@ import android.widget.TextView;
 
 import com.livelovely.slidinguplist.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
+
 public class DemoActivity extends Activity {
     private static final String TAG = "DemoActivity";
 
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
     private SlidingUpPanelLayout mLayout;
+    private ArrayAdapter<String> mArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +36,47 @@ public class DemoActivity extends Activity {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLayout.setEnableDragViewTouchEvents(true);
 
+        findViewById(R.id.single_element_button).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<String> list = new ArrayList<>();
+                list.add("Plop");
+                mArrayAdapter.clear();
+                mArrayAdapter.addAll(list);
+                mLayout.requestLayout();
+                mLayout.showPanel();
+            }
+        });
+        findViewById(R.id.multiple_element_button).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<String> list = new ArrayList<>();
+                for (int i = 0; i < 10; i++)
+                    list.add(i % 2 == 0 ? "plop" : "plip");
+                mArrayAdapter.clear();
+                mArrayAdapter.addAll(list);
+                mLayout.requestLayout();
+                mLayout.showPanel();
+            }
+        });
+        findViewById(R.id.toggle_visibility).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mLayout.isPanelHidden()) {
+                    mLayout.showPanel();
+                } else {
+                    mLayout.hidePanel();
+                }
+            }
+        });
+
         ListView lv = (ListView) findViewById(R.id.listview);
-        lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                new String[]{"Plop"}));//, "Plip", "Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip",}));
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Plop");
+        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+
+        //, "Plip", "Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip","Plop", "Plip",})
+        lv.setAdapter(mArrayAdapter);
 
         boolean actionBarHidden = savedInstanceState != null && savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false);
         if (actionBarHidden) {
