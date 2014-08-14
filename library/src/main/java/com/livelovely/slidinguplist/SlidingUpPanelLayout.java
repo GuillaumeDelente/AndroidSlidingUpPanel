@@ -656,8 +656,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mSlideRange = 0;
                     mPanelHeight = contentHeight;
                     mIsSlidingEnabled = false;
-                    mSlideOffset = 0f;
-                    mSlideState = SlideState.COLLAPSED;
+                    mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
+                    mSlideState = (mSlideState == SlideState.HIDDEN ?
+                            SlideState.HIDDEN : SlideState.COLLAPSED);
                     Log.d(TAG, "content is < to minHeight");
                 } else {
                     mSlideRange = contentHeight - mPanelHeight;
