@@ -648,6 +648,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             if (child == mSlideableView) {
+                Log.d(TAG, "onMeasure slideableView");
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.AT_MOST);
                 child.measure(childWidthSpec, childHeightSpec);
                 final int contentHeight = child.getMeasuredHeight();
@@ -655,9 +656,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     mSlideRange = 0;
                     mPanelHeight = contentHeight;
                     mIsSlidingEnabled = false;
+                    mSlideOffset = 0f;
+                    mSlideState = SlideState.COLLAPSED;
+                    Log.d(TAG, "content is < to minHeight");
                 } else {
                     mSlideRange = contentHeight - mPanelHeight;
                     mIsSlidingEnabled = true;
+                    Log.d(TAG, "content is > to minHeight");
                 }
             }
             child.measure(childWidthSpec, childHeightSpec);
@@ -702,6 +707,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             int childTop = paddingTop;
 
             if (child == mSlideableView) {
+                Log.d(TAG, "onLayout SlideOffset is " + mSlideOffset);
                 childTop = computePanelTopPosition(mSlideOffset);
             }
 
@@ -714,6 +720,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             final int childLeft = paddingLeft;
             final int childRight = childLeft + child.getMeasuredWidth();
 
+            if (child == mSlideableView) {
+                Log.d(TAG, "Layout child at top " + childTop + " and bottom " + childBottom);
+            }
             child.layout(childLeft, childTop, childRight, childBottom);
         }
 
