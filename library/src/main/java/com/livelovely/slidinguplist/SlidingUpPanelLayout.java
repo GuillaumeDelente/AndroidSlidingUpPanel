@@ -17,6 +17,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ListView;
 
 public class SlidingUpPanelLayout extends ViewGroup {
@@ -580,6 +582,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.d(TAG, "onMeasure");
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -868,6 +871,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     private int computePanelTopPosition(float slideOffset) {
         int slidingViewHeight = mSlideableView != null ? mSlideableView.getMeasuredHeight() : 0;
+        Log.d(TAG, "computePanelTopPosition slideRange is " + mSlideRange + " panelHeight is " + mPanelHeight);
         final int slideRange = mSlideRange == 0 ? mPanelHeight : mSlideRange;
         int slidePixelOffset = (int) (slideOffset * slideRange);
         // Compute the top of the panel if its collapsed
@@ -983,9 +987,32 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mSlideState = SlideState.COLLAPSED;
         } else {
             if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
-            mSlideableView.setVisibility(View.VISIBLE);
-            requestLayout();
-            smoothSlideTo(0, 0);
+            //mSlideableView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "Requesting layout from showPanel");
+            //mSlideState = SlideState.COLLAPSED;
+            //requestLayout();
+            //mSlideableView.setVisibility(View.VISIBLE);
+            int childHeightSpec = MeasureSpec.makeMeasureSpec(getLayoutParams().height,
+                    MeasureSpec.AT_MOST);
+            mSlideableView.measure(MeasureSpec.makeMeasureSpec(getLayoutParams().height,
+                    MeasureSpec.UNSPECIFIED), childHeightSpec);
+
+            final int contentHeight = mSlideableView.getMeasuredHeight();
+            if (contentHeight <= mPanelHeight) {
+                mSlideRange = 0;
+                mPanelHeight = contentHeight;
+                mIsSlidingEnabled = false;
+                mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
+                mSlideState = (mSlideState == SlideState.HIDDEN ?
+                        SlideState.HIDDEN : SlideState.COLLAPSED);
+                Log.d(TAG, "content is < to minHeight");
+            } else {
+                mPanelHeight = mSavedPanelHeight;
+                mSlideRange = contentHeight - mPanelHeight;
+                mIsSlidingEnabled = true;
+                Log.d(TAG, "content is > to minHeight");
+            }
+            smoothSlideTo(0f, 0);
         }
         dispatchOnPanelShown(mSlideableView);
     }
@@ -1001,13 +1028,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (mSlideState == SlideState.DRAGGING || mSlideState == SlideState.HIDDEN) return;
             int newTop = computePanelTopPosition(0.0f) + (mIsSlidingUp ?
                     +mPanelHeight : -mPanelHeight);
-            Log.d(TAG, "ComputePanelTopPosition : " + computePanelTopPosition(0.0f));
-            Log.d(TAG, "newTop : " + newTop);
-            Log.d(TAG, "computeSlideOffset : " + computeSlideOffset(newTop));
-            Log.d(TAG, "mPanelheight : " + mPanelHeight);
-            Log.d(TAG, "mSlideRange : " + mSlideRange);
             smoothSlideTo(computeSlideOffset(newTop), 0);
         }
+        dispatchOnPanelHidden(mSlideableView);
     }
 
     private void onPanelDragged(int newTop) {
@@ -1224,7 +1247,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 } else if (mSlideOffset < 0) {
                     Log.d(TAG, "Setting hidden state");
                     mSlideState = SlideState.HIDDEN;
-                    mSlideableView.setVisibility(View.GONE);
+                    //mSlideableView.setVisibility(View.GONE);
                     dispatchOnPanelHidden(mSlideableView);
                 } else if (mSlideState != SlideState.ANCHORED) {
                     updateObscuredViewVisibility();

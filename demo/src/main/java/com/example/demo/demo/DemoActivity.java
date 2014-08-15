@@ -33,6 +33,7 @@ public class DemoActivity extends Activity {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_demo);
 
+        final ListView lv = (ListView) findViewById(R.id.listview);
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLayout.setEnableDragViewTouchEvents(true);
 
@@ -55,7 +56,6 @@ public class DemoActivity extends Activity {
                     list.add(i % 2 == 0 ? "plop" : "plip");
                 mArrayAdapter.clear();
                 mArrayAdapter.addAll(list);
-                mLayout.requestLayout();
                 mLayout.showPanel();
             }
         });
@@ -69,8 +69,13 @@ public class DemoActivity extends Activity {
                 }
             }
         });
+        findViewById(R.id.request_layout).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.requestLayout();
+            }
+        });
 
-        ListView lv = (ListView) findViewById(R.id.listview);
         ArrayList<String> list = new ArrayList<>();
         list.add("Plop");
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);

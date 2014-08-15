@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="?android:attr/actionBarSize"
-            android:background="@android:color/holo_blue_bright">
+            android:background="@android:color/holo_blue_bright"
+            android:orientation="vertical">
             <Button
                 android:id="@+id/single_element_button"
                 android:layout_width="wrap_content"
@@ -35,6 +36,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Toggle Visibility"/>
+
+            <Button
+            android:id="@+id/request_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RequestLayout"/>
         </LinearLayout>
 
         <!-- SLIDING LAYOUT -->
