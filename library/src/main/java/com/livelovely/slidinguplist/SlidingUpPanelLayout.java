@@ -17,9 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ListView;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -98,7 +95,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * The size of the overhang in pixels.
      */
-    private int mSavedPanelHeight = -1;
+    private int mMaxPanelHeight = -1;
 
     /**
      * The size of the shadow in pixels.
@@ -220,8 +217,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         /**
          * Called when a sliding panel becomes slid completely expanded.
          * @param panel The child view that was slid to a expanded position
+         * @param hasMaxHeight True if the sliding panel has reach is max height.
          */
-        public void onPanelExpanded(View panel);
+        public void onPanelExpanded(View panel, boolean hasMaxHeight);
 
         /**
          * Called when a sliding panel becomes anchored.
@@ -253,7 +251,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         public void onPanelCollapsed(View panel) {
         }
         @Override
-        public void onPanelExpanded(View panel) {
+        public void onPanelExpanded(View panel, boolean hasMaxHeight) {
         }
         @Override
         public void onPanelAnchored(View panel) {
@@ -322,7 +320,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mPanelHeight == -1) {
             mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
         }
-        mSavedPanelHeight = mPanelHeight;
+        mMaxPanelHeight = mPanelHeight;
         if (mShadowHeight == -1) {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
@@ -486,7 +484,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     void dispatchOnPanelExpanded(View panel) {
         if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelExpanded(panel);
+            mPanelSlideListener.onPanelExpanded(panel, mPanelHeight == mMaxPanelHeight);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -588,7 +586,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        mPanelHeight = mSavedPanelHeight;
+        mPanelHeight = mMaxPanelHeight;
 
         if (widthMode != MeasureSpec.EXACTLY) {
             throw new IllegalStateException("Width must have an exact value or MATCH_PARENT");
@@ -1007,7 +1005,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                         SlideState.HIDDEN : SlideState.COLLAPSED);
                 Log.d(TAG, "content is < to minHeight");
             } else {
-                mPanelHeight = mSavedPanelHeight;
+                mPanelHeight = mMaxPanelHeight;
                 mSlideRange = contentHeight - mPanelHeight;
                 mIsSlidingEnabled = true;
                 Log.d(TAG, "content is > to minHeight");
