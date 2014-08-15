@@ -1199,8 +1199,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return new LayoutParams(getContext(), attrs);
     }
 
+    /*
     @Override
     public Parcelable onSaveInstanceState() {
+
         Parcelable superState = super.onSaveInstanceState();
 
         SavedState ss = new SavedState(superState);
@@ -1208,13 +1210,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         return ss;
     }
+    */
 
+    /*
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         mSlideState = ss.mSlideState;
     }
+    */
 
     private class DragHelperCallback extends ViewDragHelper.Callback {
 
