@@ -1,6 +1,12 @@
+Android Sliding Up List
+=========================
+Ugly fork to make a ListView as the sliding panel possible in the Lovely app.
+Time is running so this is higly coupled to the Lovely App.
+One day I'll take time to rewrite it the way it should be.
+
+
 Android Sliding Up Panel
 =========================
-
 This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
 
 As seen in [Umano](http://umanoapp.com) [Android app](https://play.google.com/store/apps/details?id=com.sothree.umano):
