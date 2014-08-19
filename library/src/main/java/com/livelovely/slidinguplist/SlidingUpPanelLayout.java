@@ -649,23 +649,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (child == mSlideableView) {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.AT_MOST);
+                initPanelSize(child, childWidthSpec, childHeightSpec);
+            } else {
                 child.measure(childWidthSpec, childHeightSpec);
-                final int contentHeight = child.getMeasuredHeight();
-                if (contentHeight < mPanelHeight) {
-                    mSlideRange = 0;
-                    mPanelHeight = contentHeight;
-                    mIsSlidingEnabled = false;
-                    mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
-                    mSlideState = (mSlideState == SlideState.HIDDEN ?
-                            SlideState.HIDDEN : SlideState.COLLAPSED);
-                } else {
-                    mSlideRange = contentHeight - mPanelHeight;
-                    mIsSlidingEnabled = true;
-                }
             }
-            child.measure(childWidthSpec, childHeightSpec);
         }
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    private void initPanelSize(View child, int childWidthSpec, int childHeightSpec) {
+        child.measure(childWidthSpec, childHeightSpec);
+        final int contentHeight = child.getMeasuredHeight();
+        if (contentHeight < mPanelHeight) {
+            mSlideRange = 0;
+            mPanelHeight = contentHeight;
+            mIsSlidingEnabled = false;
+            mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
+            mSlideState = (mSlideState == SlideState.HIDDEN ?
+                    SlideState.HIDDEN : SlideState.COLLAPSED);
+        } else {
+            mSlideRange = contentHeight - mPanelHeight;
+            mIsSlidingEnabled = true;
+        }
     }
 
     @Override
@@ -968,26 +973,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mSlideState = SlideState.COLLAPSED;
         } else {
             if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
+            final int childWidthSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
+                    MeasureSpec.EXACTLY);
             final int childHeightSpec = MeasureSpec.makeMeasureSpec(
                     mSlideableView.getLayoutParams().height,
                     MeasureSpec.AT_MOST);
-            final int childWidthSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
-                    MeasureSpec.EXACTLY);
-            mSlideableView.measure(childWidthSpec, childHeightSpec);
-
-            final int contentHeight = mSlideableView.getMeasuredHeight();
-            if (contentHeight <= mPanelHeight) {
-                mSlideRange = 0;
-                mPanelHeight = contentHeight;
-                mIsSlidingEnabled = false;
-                mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
-                mSlideState = (mSlideState == SlideState.HIDDEN ?
-                        SlideState.HIDDEN : SlideState.COLLAPSED);
-            } else {
-                mPanelHeight = mMaxPanelHeight;
-                mSlideRange = contentHeight - mPanelHeight;
-                mIsSlidingEnabled = true;
-            }
+            initPanelSize(mSlideableView, childWidthSpec, childHeightSpec);
             smoothSlideTo(0f, 0);
         }
         dispatchOnPanelShown(mSlideableView);
