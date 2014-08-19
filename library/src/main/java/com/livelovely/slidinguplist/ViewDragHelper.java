@@ -960,7 +960,6 @@ public class ViewDragHelper {
                 // Catch a settling view if possible.
                 if (toCapture == mCapturedView && mDragState == STATE_SETTLING) {
                     tryCaptureViewForDrag(toCapture, pointerId);
-                    Log.d("SlidingUpPanel", "case11 " + mDragState);
                 }
 
                 final int edgesTouched = mInitialEdgesTouched[pointerId];
@@ -988,7 +987,6 @@ public class ViewDragHelper {
                     final View toCapture = findTopChildUnder((int) x, (int) y);
                     if (toCapture == mCapturedView) {
                         tryCaptureViewForDrag(toCapture, pointerId);
-                        Log.d("SlidingUpPanel", "case12 " + mDragState);
                     }
                 }
                 break;
@@ -1013,15 +1011,7 @@ public class ViewDragHelper {
                     final View toCapture = findTopChildUnder((int)mInitialMotionX[pointerId], (int)mInitialMotionY[pointerId]);
                     if (toCapture != null && checkTouchSlop(toCapture, dx, dy) &&
                             tryCaptureViewForDrag(toCapture, pointerId)) {
-                        Log.d("SlidingUpPanel", "case13 " + mDragState);
                         break;
-                    }
-                    if (toCapture == null) {
-                        Log.d("SlidingUpPanel", "case13 " + mDragState + " toCapture is null");
-                    } else if (checkTouchSlop(toCapture, dx, dy)) {
-                        Log.d("SlidingUpPanel", "case13 " + mDragState + " tryCaptureViewForDrag false");
-                    } else {
-                        Log.d("SlidingUpPanel", "case13 " + mDragState + " checkTouchSlop false");
                     }
                 }
                 saveLastMotion(ev);
@@ -1374,7 +1364,6 @@ public class ViewDragHelper {
     }
 
     private void dragTo(int left, int top, int dx, int dy) {
-        Log.d("SlidingUpPanelLayout", "dragTo " + top);
         int clampedX = left;
         int clampedY = top;
         final int oldLeft = mCapturedView.getLeft();
