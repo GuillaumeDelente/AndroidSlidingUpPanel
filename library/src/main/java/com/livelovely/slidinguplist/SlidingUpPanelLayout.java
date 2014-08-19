@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.ListView;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -96,7 +95,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     /**
      * The size of the overhang in pixels.
      */
-    private int mMaxPanelHeight = -1;
+    private int mSavedPanelHeight = -1;
 
     /**
      * The size of the shadow in pixels.
@@ -299,7 +298,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             if (ta != null) {
                 mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_panelHeight, -1);
+
                 mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowHeight, -1);
+
                 mParallaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_paralaxOffset, -1);
 
                 mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
@@ -321,7 +322,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (mPanelHeight == -1) {
             mPanelHeight = (int) (DEFAULT_PANEL_HEIGHT * density + 0.5f);
         }
-        mMaxPanelHeight = mPanelHeight;
+        mSavedPanelHeight = mPanelHeight;
         if (mShadowHeight == -1) {
             mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
         }
@@ -485,7 +486,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     void dispatchOnPanelExpanded(View panel) {
         if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelExpanded(panel, mPanelHeight == mMaxPanelHeight);
+            mPanelSlideListener.onPanelExpanded(panel,
+                    mPanelHeight == mSlideableView.getLayoutParams().height);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -586,7 +588,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        mPanelHeight = mMaxPanelHeight;
+        mPanelHeight = mSavedPanelHeight;
 
         if (widthMode != MeasureSpec.EXACTLY) {
             throw new IllegalStateException("Width must have an exact value or MATCH_PARENT");
@@ -648,6 +650,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             if (child == mSlideableView) {
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, "onMeasure slideableView");
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.AT_MOST);
                 initPanelSize(child, childWidthSpec, childHeightSpec);
             } else {
@@ -660,6 +664,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private void initPanelSize(View child, int childWidthSpec, int childHeightSpec) {
         child.measure(childWidthSpec, childHeightSpec);
         final int contentHeight = child.getMeasuredHeight();
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "initPanelSize contentHeight " + contentHeight);
         if (contentHeight < mPanelHeight) {
             mSlideRange = 0;
             mPanelHeight = contentHeight;
@@ -973,11 +979,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mSlideState = SlideState.COLLAPSED;
         } else {
             if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
+            mPanelHeight = mSavedPanelHeight;
             final int childWidthSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
                     MeasureSpec.EXACTLY);
             final int childHeightSpec = MeasureSpec.makeMeasureSpec(
                     mSlideableView.getLayoutParams().height,
                     MeasureSpec.AT_MOST);
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "showPanel() ");
             initPanelSize(mSlideableView, childWidthSpec, childHeightSpec);
             smoothSlideTo(0f, 0);
         }
