@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.ListView;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -652,7 +653,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 Log.d(TAG, "onMeasure slideableView");
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.AT_MOST);
                 child.measure(childWidthSpec, childHeightSpec);
+                Log.d(TAG, "ListView has " + ((ListView) child).getAdapter().getCount() + " items");
+
                 final int contentHeight = child.getMeasuredHeight();
+                Log.d(TAG, "SlideableView measuredHeight " + contentHeight);
                 if (contentHeight < mPanelHeight) {
                     mSlideRange = 0;
                     mPanelHeight = contentHeight;
@@ -985,15 +989,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mSlideState = SlideState.COLLAPSED;
         } else {
             if (mSlideableView == null || mSlideState != SlideState.HIDDEN) return;
-            //mSlideableView.setVisibility(View.VISIBLE);
-            Log.d(TAG, "Requesting layout from showPanel");
-            //mSlideState = SlideState.COLLAPSED;
-            //requestLayout();
-            //mSlideableView.setVisibility(View.VISIBLE);
-            int childHeightSpec = MeasureSpec.makeMeasureSpec(getLayoutParams().height,
+            final int childHeightSpec = MeasureSpec.makeMeasureSpec(
+                    mSlideableView.getLayoutParams().height,
                     MeasureSpec.AT_MOST);
-            mSlideableView.measure(MeasureSpec.makeMeasureSpec(getLayoutParams().height,
-                    MeasureSpec.UNSPECIFIED), childHeightSpec);
+            final int childWidthSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
+                    MeasureSpec.EXACTLY);
+            mSlideableView.measure(childWidthSpec, childHeightSpec);
 
             final int contentHeight = mSlideableView.getMeasuredHeight();
             if (contentHeight <= mPanelHeight) {
@@ -1003,12 +1004,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlideOffset = (mSlideOffset <= 0f ? mSlideOffset : 0f);
                 mSlideState = (mSlideState == SlideState.HIDDEN ?
                         SlideState.HIDDEN : SlideState.COLLAPSED);
-                Log.d(TAG, "content is < to minHeight");
             } else {
                 mPanelHeight = mMaxPanelHeight;
                 mSlideRange = contentHeight - mPanelHeight;
                 mIsSlidingEnabled = true;
-                Log.d(TAG, "content is > to minHeight");
             }
             smoothSlideTo(0f, 0);
         }
